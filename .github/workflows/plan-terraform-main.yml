@@ -12,6 +12,7 @@ env:
 
 jobs:
   plan-dev:
+    permissions: write-all
     name: 'terraform plan dev'
     runs-on: ubuntu-latest
     env:
