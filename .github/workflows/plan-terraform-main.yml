@@ -15,7 +15,7 @@ jobs:
     name: 'terraform plan dev'
     runs-on: ubuntu-latest
     env:
-      TF_WORKING_DIR: 'infrastructure/terraform/main/**'
+      TF_WORKING_DIR: 'infrastructure/terraform/main'
 
     defaults:
       run:
