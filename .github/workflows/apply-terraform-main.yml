@@ -17,7 +17,7 @@ jobs:
     name: 'terraform apply dev'
     runs-on: ubuntu-latest
     env:
-      TF_WORKING_DIR: 'aws/main-infrastructure'
+      TF_WORKING_DIR: 'infrastructure/terraform/main'
 
     defaults:
       run:
