@@ -5,6 +5,10 @@ data "archive_file" "sre-grafana-lambda" {
   output_path = "${path.module}/sre-grafana-lambda.zip"
 }
 
+resource "aws_sns_topic" "sre-grafana-sns-topic" {
+  name = "sre-grafana-sns-topic"
+}
+
 resource "aws_lambda_function" "sre-grafana-lambda" {
   function_name    = "sre-grafana-lambda"
   role             = aws_iam_role.sre-grafana-lambda-role.arn
@@ -15,6 +19,7 @@ resource "aws_lambda_function" "sre-grafana-lambda" {
   dead_letter_config {
     target_arn = aws_sqs_queue.dlq.arn
   }
+
   publish = true
 }
 
@@ -36,6 +41,19 @@ resource "aws_iam_role" "sre-grafana-lambda-role" {
   })
 }
 
+resource "aws_lambda_permission" "sns_invoke_lambda_permission" {
+  statement_id  = "AllowExecutionFromSNS"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.sre-grafana-lambda.arn
+  principal     = "sns.amazonaws.com"
+  source_arn    = aws_sns_topic.sre-grafana-sns-topic.arn
+}
+
+resource "aws_sns_topic_subscription" "sre-grafana-lambda-sns_topic_subscription" {
+  topic_arn = aws_sns_topic.sre-grafana-sns-topic.arn
+  protocol  = "lambda"
+  endpoint  = aws_lambda_function.sre-grafana-lambda.arn
+}
 
 resource "aws_iam_role_policy_attachment" "lambda_sqs_send" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
