@@ -5,6 +5,21 @@ data "archive_file" "lambda_hello_world" {
   output_path = "${path.module}/sre-grafana-lambda.zip"
 }
 
+resource "aws_lambda_function" "sre-grafana-lambda" {
+  function_name    = "lambda_handler"
+  role             = aws_iam_role.sre-grafana-lambda-role.arn
+  handler          = "lambda_function.lambda_handler"
+  runtime = "python3.8"
+
+  source_code_hash = data.archive_file.lambda_hello_world.output_base64sha256
+
+  dead_letter_config {
+    target_arn = aws_sqs_queue.dlq.arn
+  }
+  publish = true
+}
+
+
 resource "aws_iam_role" "sre-grafana-lambda-role" {
   name = "sre-grafana-lambda-role"
 
@@ -55,20 +70,4 @@ resource "aws_cloudwatch_metric_alarm" "dlq_alarm" {
 
 resource "aws_sns_topic" "notification_topic" {
   name = "sre-grafana-lambda-notifications"
-}
-
-
-resource "aws_lambda_function" "sre-grafana-lambda" {
-  filename         = "lambda_function.py"
-  function_name    = "lambda_handler"
-  role             = aws_iam_role.sre-grafana-lambda-role.arn
-  handler          = "lambda_function.lambda_handler"
-  runtime = "python3.8"
-
-  source_code_hash = data.archive_file.lambda_hello_world.output_base64sha256
-
-  dead_letter_config {
-    target_arn = aws_sqs_queue.dlq.arn
-  }
-  publish = true
 }
