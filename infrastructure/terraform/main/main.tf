@@ -4,14 +4,11 @@ resource "aws_lambda_function" "sre-grafana-lambda" {
   handler      = "lambda_handler"
   runtime      = "python3.8"
 
-  code         = <<EOF
-    import json
-    def lambda_handler(event, context):
-        return {
-            'statusCode': 200,
-            'body': json.dumps(event['body'])
-        }
-    EOF
+  inline_code = <<EOF
+def lambda_handler(event, context):
+    # Your code here
+    raise Exception("Something went wrong!")
+EOF
 
   dead_letter_config {
     target_arn = aws_sqs_queue.dlq.arn
