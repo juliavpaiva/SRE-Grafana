@@ -5,29 +5,12 @@ data "archive_file" "sre-grafana-lambda" {
   output_path = "${path.module}/sre-grafana-lambda.zip"
 }
 
-resource "aws_s3_bucket" "sre-grafana-lambda-bucket" {
-  bucket = "sre-grafana-lambda-bucket"
-}
-
-resource "aws_s3_object" "sre-grafana-lambda-object" {
-  bucket = aws_s3_bucket.sre-grafana-lambda-bucket.id
-
-  key    = "sre-grafana-lambda.zip"
-  source = data.archive_file.sre-grafana-lambda.output_path
-
-  etag = filemd5(data.archive_file.sre-grafana-lambda.output_path)
-}
-
 resource "aws_lambda_function" "sre-grafana-lambda" {
   function_name    = "lambda_handler"
   role             = aws_iam_role.sre-grafana-lambda-role.arn
   handler          = "lambda_function.lambda_handler"
-  runtime = "python3.8"
-
-  s3_bucket = aws_s3_bucket.sre-grafana-lambda-bucket.id
-  s3_key    = aws_s3_object.sre-grafana-lambda-object.key
-
-  source_code_hash = data.archive_file.sre-grafana-lambda.output_base64sha256
+  runtime          = "python3.8"
+  filename         = "${path.module}/sre-grafana-lambda.zip"
 
   dead_letter_config {
     target_arn = aws_sqs_queue.dlq.arn
