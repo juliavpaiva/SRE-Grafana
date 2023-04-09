@@ -3,7 +3,7 @@ import logging
 
 def lambda_handler(event, context):
     # Setting log configuration
-    logging.basicConfig(level = logging.INFO)
+    logging.basicConfig(level = logging.DEBUG)
     logger = logging.getLogger()
 
     # Extractiong message
