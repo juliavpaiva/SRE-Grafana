@@ -75,7 +75,7 @@ resource "aws_cloudwatch_metric_alarm" "dlq_alarm" {
   metric_name         = "ApproximateNumberOfMessagesVisible"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   threshold           = 1
-  period              = 600
+  period              = 60
   evaluation_periods  = 2
   namespace           = "AWS/SQS"
 
