@@ -1,4 +1,4 @@
-data "archive_file" "lambda_hello_world" {
+data "archive_file" "sre-grafana-lambda" {
   type = "zip"
 
   source_dir  = "${path.module}/sre-grafana-lambda"
@@ -9,9 +9,8 @@ resource "aws_lambda_function" "sre-grafana-lambda" {
   function_name    = "lambda_handler"
   role             = aws_iam_role.sre-grafana-lambda-role.arn
   handler          = "lambda_function.lambda_handler"
-  runtime = "python3.8"
-
-  source_code_hash = data.archive_file.lambda_hello_world.output_base64sha256
+  runtime          = "python3.8"
+  filename         = "${path.module}/sre-grafana-lambda.zip"
 
   dead_letter_config {
     target_arn = aws_sqs_queue.dlq.arn
