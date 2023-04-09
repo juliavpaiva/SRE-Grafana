@@ -36,6 +36,12 @@ resource "aws_iam_role" "sre-grafana-lambda-role" {
   })
 }
 
+
+resource "aws_iam_role_policy_attachment" "lambda_sqs_send" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
+  role       = aws_iam_role.sre-grafana-lambda-role.name
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
   role       = aws_iam_role.sre-grafana-lambda-role.name
