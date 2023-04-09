@@ -20,12 +20,6 @@ resource "aws_lambda_function" "sre-grafana-lambda" {
     target_arn = aws_sqs_queue.dlq.arn
   }
 
-  environment {
-    variables = {
-      SNS_TOPIC_ARN = sre-grafana-sns-topic.arn
-    }
-  }
-
   publish = true
 }
 
