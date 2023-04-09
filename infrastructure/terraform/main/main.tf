@@ -71,13 +71,13 @@ resource "aws_sqs_queue" "dlq" {
 
 resource "aws_cloudwatch_metric_alarm" "dlq_alarm" {
   alarm_name          = "sre-grafana-lambda-dlq-alarm"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = "1"
-  metric_name         = "ApproximateNumberOfMessagesVisible"
-  namespace           = "AWS/SQS"
-  period              = "60"
   statistic           = "Sum"
-  threshold           = "1"
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  threshold           = 1
+  period              = 600
+  evaluation_periods  = 2
+  namespace           = "AWS/SQS"
 
   dimensions = {
     QueueName    = aws_sqs_queue.dlq.name
@@ -86,9 +86,8 @@ resource "aws_cloudwatch_metric_alarm" "dlq_alarm" {
 
   alarm_description = "Alarm when the DLQ for the sre-grafana-lambda function reaches 1 message."
 
-  alarm_actions = [
-    aws_sns_topic.notification_topic.arn,
-  ]
+  alarm_actions = [aws_sns_topic.notification_topic.arn]
+  ok_actions    = [aws_sns_topic.notification_topic.arn]
 }
 
 resource "aws_sns_topic" "notification_topic" {
