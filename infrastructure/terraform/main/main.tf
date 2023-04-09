@@ -6,7 +6,7 @@ data "archive_file" "sre-grafana-lambda" {
 }
 
 resource "aws_lambda_function" "sre-grafana-lambda" {
-  function_name    = "lambda_handler"
+  function_name    = "sre-grafana-lambda"
   role             = aws_iam_role.sre-grafana-lambda-role.arn
   handler          = "lambda_function.lambda_handler"
   runtime          = "python3.8"
