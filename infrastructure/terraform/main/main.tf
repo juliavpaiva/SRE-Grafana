@@ -1,11 +1,17 @@
 resource "aws_lambda_function" "sre-grafana-lambda" {
   function_name = "sre-grafana-lambda"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "handler.lambda_handler"
-  runtime       = "python3.8"
-  timeout       = 10
+  handler      = "lambda_handler"
+  runtime      = "python3.8"
 
-  filename      = "${path.module}/handler.py" 
+  code         = <<EOF
+    import json
+    def lambda_handler(event, context):
+        return {
+            'statusCode': 200,
+            'body': json.dumps(event['body'])
+        }
+    EOF
 
   dead_letter_config {
     target_arn = aws_sqs_queue.dlq.arn
