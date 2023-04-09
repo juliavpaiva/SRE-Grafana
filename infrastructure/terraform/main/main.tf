@@ -81,7 +81,6 @@ resource "aws_cloudwatch_metric_alarm" "dlq_alarm" {
 
   dimensions = {
     QueueName    = aws_sqs_queue.dlq.name
-    QueueUrl     = aws_sqs_queue.dlq.id
   }
 
   alarm_description = "Alarm when the DLQ for the sre-grafana-lambda function reaches 1 message."
