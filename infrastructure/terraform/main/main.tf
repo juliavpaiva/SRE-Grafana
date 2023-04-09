@@ -5,7 +5,7 @@ resource "aws_lambda_function" "sre-grafana-lambda" {
   runtime       = "python3.8"
   timeout       = 10
 
-  filename      = "sre_grafana_lambda/handler.py"
+  filename      = "${path.module}/../sre_grafana_lambda/handler.py"
 
   dead_letter_config {
     target_arn = aws_sqs_queue.dlq.arn
